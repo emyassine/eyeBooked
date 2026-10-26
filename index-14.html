@@ -299,10 +299,12 @@ document.getElementById('capture-phone').addEventListener('click',async function
     if(!window.htmlToImage)throw new Error('La librairie de capture n’est pas chargée. Vérifiez la connexion Internet.');
     await document.fonts.ready;
     const fontEmbedCSS=await window.htmlToImage.getFontEmbedCSS(phone);
-    const blob=await window.htmlToImage.toBlob(phone,{pixelRatio:6,backgroundColor:null,fontEmbedCSS,style:{borderRadius:'0',border:'0',boxShadow:'none'}});
+    // iPhone 17 Pro: 402 × 874 CSS px at 3× = 1206 × 2622 px.
+    const captureWidth=402,captureHeight=874,captureScale=3;
+    const blob=await window.htmlToImage.toBlob(phone,{width:captureWidth,height:captureHeight,canvasWidth:captureWidth,canvasHeight:captureHeight,pixelRatio:captureScale,backgroundColor:null,fontEmbedCSS,style:{width:captureWidth+'px',height:captureHeight+'px',maxWidth:'none',borderRadius:'0',border:'0',boxShadow:'none'}});
     if(!blob)throw new Error('Export PNG impossible');
     const url=URL.createObjectURL(blob),link=document.createElement('a');
-    link.download='eyebooked-screen-'+new Date().toISOString().replace(/[:.]/g,'-')+'.png';
+    link.download='eyebooked-iphone-17-pro-'+new Date().toISOString().replace(/[:.]/g,'-')+'.png';
     link.href=url;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
   }catch(error){console.error('Capture impossible',error);alert(error.message||'La capture a échoué.')}
   finally{button.disabled=false}
